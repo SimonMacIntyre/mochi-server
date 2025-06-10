@@ -1740,7 +1740,7 @@ func TestServerProcessPublishACLCheckDeny(t *testing.T) {
 }
 
 func TestServerProcessPublishOnMessageRecvRejectedQos0(t *testing.T) {
-	// Test that QoS 0 rejections return the error (not silently ignored)
+	// Test that QoS 0 rejections are silently ignored (return nil)
 	s := newServer()
 	require.NotNil(t, s)
 	hook := new(modifiedHookBase)
@@ -1754,9 +1754,9 @@ func TestServerProcessPublishOnMessageRecvRejectedQos0(t *testing.T) {
 	defer s.Close()
 	cl, _, _ := newTestClient()
 	
-	// QoS 0 rejections should return the error for proper handling by caller
+	// QoS 0 rejections should be silently ignored (return nil)
 	err = s.processPublish(cl, *packets.TPacketData[packets.Publish].Get(packets.TPublishBasic).Packet)
-	require.ErrorIs(t, err, packets.ErrRejectPacket)
+	require.NoError(t, err)
 }
 
 func TestServerProcessPublishOnMessageRecvRejectedQos1(t *testing.T) {
