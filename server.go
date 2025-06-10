@@ -916,7 +916,7 @@ func (s *Server) processPublish(cl *Client, pk packets.Packet) error {
 	} else if errors.Is(err, packets.CodeSuccessIgnore) {
 		pk.Ignore = true
 	} else if cl.Properties.ProtocolVersion != 5 || pk.FixedHeader.Qos == 0 {
-		return nil
+		return err
 	} else if cl.Properties.ProtocolVersion == 5 && pk.FixedHeader.Qos > 0 && errors.As(err, new(packets.Code)) {
 		ackType := packets.Puback
 		if pk.FixedHeader.Qos == 2 {
@@ -927,6 +927,8 @@ func (s *Server) processPublish(cl *Client, pk packets.Packet) error {
 			return err
 		}
 		return nil
+	} else {
+		return err
 	}
 
 	if pk.FixedHeader.Retain { // [MQTT-3.3.1-5] ![MQTT-3.3.1-8]
