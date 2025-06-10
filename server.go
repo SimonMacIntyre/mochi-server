@@ -913,7 +913,7 @@ func (s *Server) processPublish(cl *Client, pk packets.Packet) error {
 	pkx, err := s.hooks.OnPublish(cl, pk)
 	if err == nil {
 		pk = pkx
-	} else if errors.Is(err, packets.ErrRejectPacket) && (cl.Properties.ProtocolVersion != 5 || pk.FixedHeader.Qos == 0) {
+	} else if errors.Is(err, packets.ErrRejectPacket) && cl.Properties.ProtocolVersion != 5 {
 		return nil
 	} else if errors.Is(err, packets.CodeSuccessIgnore) {
 		pk.Ignore = true
